@@ -516,16 +516,34 @@ Happy Valentine's Day, Hubby.</div>
                 } else {
                     let input = document.createElement('input');
                     input.type = 'text';
+                    input.maxLength = 1;
                     input.dataset.expected = char;
-                    
-                    // 新增：按下 Enter 鍵跳到下一個輸入框
+
+                    // 輸入時：若尚未在組字（中文輸入法），填滿一格後自動跳到下一格
+                    input.addEventListener('input', (e) => {
+                        if (input.value.length >= 1 && !e.isComposing) {
+                            const idx = inputElements.indexOf(input);
+                            const next = inputElements[idx + 1];
+                            if (next) next.focus();
+                        }
+                    });
+
+                    // 鍵盤控制：Enter 進下一格、Backspace 刪除本格，空格則往後刪上一格
                     input.addEventListener('keydown', (e) => {
+                        const idx = inputElements.indexOf(input);
                         if (e.key === 'Enter') {
                             e.preventDefault();
-                            const currentIndex = inputElements.indexOf(input);
-                            if (currentIndex !== -1 && currentIndex + 1 < inputElements.length) {
-                                inputElements[currentIndex + 1].focus();
-                                inputElements[currentIndex + 1].select();
+                            const next = inputElements[idx + 1];
+                            if (next) { next.focus(); next.select(); }
+                        } else if (e.key === 'Backspace') {
+                            // 本格已經有字：交給預設行為刪除（連同 maxLength 限制），不跳格
+                            if (input.value.length > 0) return;
+                            // 本格是空的：刪掉上一格的字，並把焦點移回去
+                            e.preventDefault();
+                            const prev = inputElements[idx - 1];
+                            if (prev) {
+                                prev.value = '';
+                                prev.focus();
                             }
                         }
                     });
