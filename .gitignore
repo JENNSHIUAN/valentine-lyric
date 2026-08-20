@@ -1,0 +1,13 @@
+# Dependencies installed via npm/npx
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Local secrets — never commit tokens
+*.env
+.env.*
+
+# Large audio not yet added
+# (song1.mp3 intentionally not committed yet)
