@@ -42,8 +42,6 @@
         /* Sidebar Right（現在播放＋歌詞） */
         .sidebar-right { width: 340px; background: #121212; border-radius: 8px; padding: 16px; color: #fff; overflow-y: auto; display: flex; flex-direction: column; }
         .right-art { width: 100%; aspect-ratio: 1; background: #333; background-size: cover; background-position: center; border-radius: 6px; margin-bottom: 15px; flex-shrink: 0; }
-        .lyrics-section { margin-top: 20px; border-top: 1px solid #282828; padding-top: 15px; }
-        .lyrics-content { white-space: pre-line; color: #b3b3b3; font-size: 13px; line-height: 1.8; font-family: inherit; max-height: 420px; overflow-y: auto; }
 
         /* Player Bar */
         .player-bar { height: 90px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #181818; background: #000; position: fixed; bottom: 0; width: 100%; z-index: 1000; }
@@ -104,17 +102,12 @@
                 </table>
             </main>
 
-            <!-- 右側：現在播放＋歌詞 -->
+            <!-- 右側：現在播放 -->
             <aside class="sidebar-right">
                 <h3 style="margin-top:0; font-size:16px;" id="nowTitle">—</h3>
                 <div class="right-art" id="nowArt"></div>
                 <p style="font-weight:bold; margin:0 0 5px 0; color:#fff;" id="nowArtist">—</p>
                 <p style="font-size:13px; color:#b3b3b3; margin:0 0 15px 0;">專屬於你的旋律，慢慢聽～ ❤️</p>
-
-                <div class="lyrics-section">
-                    <h4 style="color:#fff; margin:0 0 10px 0; font-size:14px;">歌詞</h4>
-                    <div class="lyrics-content" id="lyricsContent">點一首歌開始 ♪</div>
-                </div>
             </aside>
         </div>
 
@@ -174,163 +167,7 @@
             { file: "fatgirl_v2.mp3", title: "胖妹妹 (V2)",         artist: "翁寶",        album: "我們的歌", art: ARTS[3] }
         ];
 
-        // ============ 歌詞庫 ============
-        const lyricsMap = {
-            "song.mp3": `[Verse 1 - Rap: 說唱風格，像是在說故事般娓娓道來，Chill Flow]
-故事從二月說起，那個打噴嚏的早晨
-你笑我是鼻涕蟲卻叮嚀我喝溫水保溫
-穿著你那件外套，淡淡香味還弄不見
-你說為了我刪掉 Bumble，只想陪我一個人瘋
-媽媽突然出現
-慌張掛了電話，內疚道歉一整夜
-我冷酷的外表下，其實早就被你攻陷
-因為你說我是你心中，最理想女友的畫面
-
-慢慢來，比較快，這是我們的節拍
-欠疼的女孩，想要好好照顧
-我們不用去算誰比較辛苦
-等了二十九年，原來這女孩就是我的歸屬
-
-時間來到三月，準備迎接新工作的挑戰
-三月三十號報到，說好要一起把未來填滿
-老闆給的難題，剩幾分鐘伺服器還在搗蛋
-我寫下 definition，只要有你在就是 happy_loop
-你回我 yield All Good，工程師的浪漫讓我偷哭
-約好去台中打麻將，輸錢算你的
-你說把我捧在手心，但你還是需要用嘴巴呼吸
-
-慢慢來，比較快，這是我們的節拍
-欠疼的女孩，總想把我保護
-南寮吹風，陪你看單身及地獄的節目
-不再害怕孤終老，不再迷途
-你是月老給我的禮物，慢慢走這條幸福路
-
-未來的四月五月，一直到慢慢變老
-討論以後的小孩，你說長得醜醜你也好
-你超有自信，覺得我們基因沒煩惱
-我說生完小孩也要愛情，你說老婆永遠是最好
-我的淺色指甲，剛好是你最喜歡的步調
-你不完美主義，忘東忘西批人個性
-在我眼裡你已經無可藥救
-這首客製化的歌，專屬翁寶的微笑
-
-慢慢來，比較快，這是我們的節拍
-欠疼的女孩，永遠被你照顧
-遇到理想情人說不愛也會結婚
-寫下更多Hubby&Wifey的紀錄
-你說我值得被疼愛，誒誒男直接變大戶
-
-Yeah, with_Weng(normal_life)
-System Optimized: It's good to have you
-就算有時候會感冒流鼻水...
-有你當我的特效藥，0 Errors
-Happy Valentine's Day, Hubby.`,
-
-            "song1.mp3": `有老公的孩子像個寶（淘金小鎮 sing sing 歌）
-（歌詞待補 ♡）`,
-
-            "fatgirl_v1.mp3": `[Intro]
-Hey... 胖妹妹。
-命運就已經注定。
-我的肥肚肚加上你是我的妹妹，這就是We。
-2026, 鮮花鬧鐘已響起. Let's go.
-
-[Verse 1]
-江子翠與mega city，人生從此刻起飛
-毛毛鞋跌入我懷裡，你尷尬到你想要倒退
-古拉爵裡你笑不停，連菜單都拿不累
-我幫你切雞腿，你說man得不像本人
-基隆路與敦化南路的交界，柯達飯店寫下劇本
-藍色蝴蝶飛過那刻，月老早已牽好線
-我的肥肚肚配上你是我的妹妹
-胖妹妹三個字，是我們專屬的稱謂
-
-[Pre-Chorus]
-T 人的理性魅力，讓 F 人的我徹底淪陷
-日常小驚喜連發，內卷的浪漫在蔓延
-江南大叔的演唱會，成了我們的第一次夜店
-銀河水都聊到天亮，隔天熱情依然不滅
-
-[Chorus]
-胖妹妹，胖妹妹，抱在懷裡最完美的調味
-胖妹妹，胖妹妹，牽你的手永遠不會累
-暖暖包 Uber Eats 吃到飽 ，送花送錢全都對味
-我是你的米卡莎，一輩子守護胖妹妹
-
-[Verse 2]
-拉亞早餐的火腿蛋餅，記得不要加醬
-頭份新竹來回跑，住民宿像度假一樣
-鋼琴彈給你聽，Jellycat 也看得心動發狂
-茶碗蒸加蘋果汁，宵夜麵麵送到身旁
-
-[Pre-Chorus ]
-Wifey 的可愛脾氣，讓 Hubby 又愛又氣 
-平常貼心舉動連發，發脆把我捧上天 
-香港維多利亞港的夜景，讓我們想像未來無限 
-鼎泰豐去了十遍，聊到半夜熱情依然不減
-
-[Chorus ]
-胖妹妹，胖妹妹，抱在懷裡最完美的調味
-胖妹妹 ，胖妹妹，牽你的手永遠不會累
-訂閱寵妻專案，刷一萬直接讓我沒煩惱
-我是你的米卡莎，一輩子守護胖妹妹
-
-[Verse 3]
-未來的日子走得再慢，我一點也不著急
-才怪～ 結婚這 part 我其實超級急，一點也不想慢
-蜜月商務艙就位`,
-
-            "fatgirl_v2.mp3": `[Intro]
-Hey... 胖妹妹。
-命運就已經注定。
-我的肥肚肚加上你是我的妹妹，這就是We。
-2026, 鮮花鬧鐘已響起. Let's go.
-
-[Verse 1]
-江子翠與mega city，人生從此刻起飛
-毛毛鞋跌入我懷裡，你尷尬到你想要倒退
-古拉爵裡你笑不停，連菜單都拿不累
-我幫你切雞腿，你說man得不像本人
-基隆路與敦化南路的交界，柯達飯店寫下劇本
-藍色蝴蝶飛過那刻，月老早已牽好線
-我的肥肚肚配上你是我的妹妹
-胖妹妹三個字，是我們專屬的稱謂
-
-[Pre-Chorus]
-T 人的理性魅力，讓 F 人的我徹底淪陷
-日常小驚喜連發，內卷的浪漫在蔓延
-江南大叔的演唱會，成了我們的第一次夜店
-銀河水都聊到天亮，隔天熱情依然不滅
-
-[Chorus]
-胖妹妹，胖妹妹，抱在懷裡最完美的調味
-胖妹妹，胖妹妹，牽你的手永遠不會累
-暖暖包 Uber Eats 吃到飽 ，送花送錢全都對味
-我是你的米卡莎，一輩子守護胖妹妹
-
-[Verse 2]
-拉亞早餐的火腿蛋餅，記得不要加醬
-頭份新竹來回跑，住民宿像度假一樣
-鋼琴彈給你聽，Jellycat 也看得心動發狂
-茶碗蒸加蘋果汁，宵夜麵麵送到身旁
-
-[Pre-Chorus ]
-Wifey 的可愛脾氣，讓 Hubby 又愛又氣 
-平常貼心舉動連發，發脆把我捧上天 
-香港維多利亞港的夜景，讓我們想像未來無限 
-鼎泰豐去了十遍，聊到半夜熱情依然不減
-
-[Chorus ]
-胖妹妹，胖妹妹，抱在懷裡最完美的調味
-胖妹妹 ，胖妹妹，牽你的手永遠不會累
-訂閱寵妻專案，刷一萬直接讓我沒煩惱
-我是你的米卡莎，一輩子守護胖妹妹
-
-[Verse 3]
-未來的日子走得再慢，我一點也不著急
-才怪～ 結婚這 part 我其實超級急，一點也不想慢
-蜜月商務艙就位`
-        };
+        // （朋友版：歌詞資料已移除）
 
         // ============ 播放器核心 ============
         const audio = document.getElementById('audio');
@@ -348,7 +185,6 @@ Wifey 的可愛脾氣，讓 Hubby 又愛又氣
         const nowTitle = document.getElementById('nowTitle');
         const nowArtist = document.getElementById('nowArtist');
         const nowArt = document.getElementById('nowArt');
-        const lyricsContent = document.getElementById('lyricsContent');
         const footerTitle = document.getElementById('footerTitle');
         const footerArtist = document.getElementById('footerArtist');
         const footerArt = document.getElementById('footerArt');
@@ -418,8 +254,6 @@ Wifey 的可愛脾氣，讓 Hubby 又愛又氣
             footerTitle.textContent = s.title;
             footerArtist.textContent = s.artist;
             footerArt.style.backgroundImage = "url('" + s.art + "')";
-            lyricsContent.textContent = lyricsMap[s.file] || '（歌詞準備中 ♡）';
-            lyricsContent.scrollTop = 0;
 
             if (autoplay) {
                 audio.play().then(() => renderPlayButtons(true)).catch(() => {
