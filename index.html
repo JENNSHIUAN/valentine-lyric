@@ -1,64 +1,54 @@
-
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Web Clone - 慢慢來比較快 & 淘金小鎮sing sing歌</title>
+    <title>我們的歌 ♡ - Spotify 風格播放器</title>
     <style>
         * { box-sizing: border-box; }
         body, html { margin: 0; padding: 0; height: 100%; background: #000; color: #b3b3b3; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; overflow: hidden; }
         .app-container { display: flex; height: calc(100vh - 90px); flex-direction: column; }
-        
-        /* Main Layout */
+
         .main-wrapper { display: flex; flex: 1; overflow: hidden; padding: 8px; gap: 8px; }
-        
-        /* Sidebar Left */
+
+        /* Sidebar Left（音樂庫） */
         .sidebar-left { width: 300px; background: #121212; border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; }
         .sidebar-item { display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px; border-radius: 4px; }
         .sidebar-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .sidebar-item.active { background: rgba(30,215,96,0.15); color: #fff; }
         .thumb { width: 48px; height: 48px; background: #333; border-radius: 4px; background-size: cover; background-position: center; flex-shrink: 0; }
-        
-        /* Content Panel (Middle) */
+
+        /* Content Panel（主清單） */
         .content-panel { flex: 1; background: linear-gradient(to bottom, #535353, #121212); border-radius: 8px; overflow-y: auto; padding: 24px; color: #fff; }
         .hero-section { display: flex; align-items: flex-end; gap: 24px; padding-bottom: 24px; }
-        .album-art { width: 232px; height: 232px; background: #333; box-shadow: 0 4px 60px rgba(0,0,0,0.5); background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500&auto=format&fit=crop&q=60'); background-size: cover; background-position: center; border-radius: 4px; }
+        .album-art { width: 192px; height: 192px; background: #333; box-shadow: 0 4px 60px rgba(0,0,0,0.5); background-size: cover; background-position: center; border-radius: 4px; flex-shrink: 0; }
         .playlist-title { font-size: 42px; font-weight: 900; margin: 0; }
-        
-        /* Action bar */
+
         .action-bar { display: flex; align-items: center; gap: 24px; margin-bottom: 20px; }
         .play-btn { width: 56px; height: 56px; background: #1ed760; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: transform 0.1s; }
         .play-btn:hover { transform: scale(1.05); background: #1fdf64; }
-        
-        /* Game Section inside Content Panel */
-        .game-section { background: rgba(0, 0, 0, 0.4); border-radius: 8px; padding: 20px; margin-top: 20px; border: 1px solid #282828; }
-        .game-title { font-size: 24px; font-weight: bold; margin-bottom: 10px; color: #1ed760; }
-        .game-player-bar { display: flex; align-items: center; gap: 15px; background: #181818; padding: 12px; border-radius: 6px; margin-bottom: 20px; }
-        .game-lyrics-container { line-height: 2.5; font-size: 16px; color: #fff; }
-        /* 放大挖空輸入框，確保字看得清楚 */
-        .game-lyrics-container input { background: #282828; border: 1px solid #4f4f4f; border-radius: 4px; color: #fff; padding: 4px 2px; font-size: 15px; margin: 0 4px; outline: none; width: 38px; text-align: center; }
-        .game-lyrics-container input:focus { border-color: #1ed760; }
-        .submit-line-btn { background: #1ed760; color: #000; border: none; padding: 12px 24px; border-radius: 20px; font-weight: bold; cursor: pointer; margin-top: 20px; font-size: 15px; transition: transform 0.1s; }
-        .submit-line-btn:hover { transform: scale(1.02); background: #1fdf64; }
 
-        /* Song List Table */
         .song-table { width: 100%; border-collapse: collapse; }
         .song-table th { text-align: left; color: #b3b3b3; font-weight: normal; border-bottom: 1px solid #282828; padding-bottom: 8px; font-size: 14px; }
-        .song-table td { padding: 10px 0; align-items: center; }
+        .song-table td { padding: 10px 0; }
         .song-row { cursor: pointer; border-radius: 4px; }
         .song-row:hover { background: rgba(255,255,255,0.1); }
+        .song-row.active { background: rgba(30,215,96,0.15); }
+        .song-row.active .song-title { color: #1ed760; }
         .song-info { display: flex; align-items: center; gap: 12px; }
-        
-        /* Sidebar Right */
-        .sidebar-right { width: 320px; background: #121212; border-radius: 8px; padding: 16px; color: #fff; overflow-y: auto; display: flex; flex-direction: column; }
-        .right-art { width: 100%; aspect-ratio: 1; background: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=500&auto=format&fit=crop&q=60'); background-size: cover; background-position: center; border-radius: 6px; margin-bottom: 15px; flex-shrink: 0; }
-        .lyrics-section { margin-top: 20px; border-top: 1px solid #282828; padding-top: 15px; }
-        .lyrics-content { white-space: pre-line; color: #b3b3b3; font-size: 13px; line-height: 1.8; font-family: inherit; }
+        .song-title { color: #fff; font-size: 15px; }
+        .song-artist { font-size: 13px; color: #b3b3b3; }
 
-        /* Player Bar (Bottom - controls song.mp3) */
+        /* Sidebar Right（現在播放＋歌詞） */
+        .sidebar-right { width: 340px; background: #121212; border-radius: 8px; padding: 16px; color: #fff; overflow-y: auto; display: flex; flex-direction: column; }
+        .right-art { width: 100%; aspect-ratio: 1; background: #333; background-size: cover; background-position: center; border-radius: 6px; margin-bottom: 15px; flex-shrink: 0; }
+        .lyrics-section { margin-top: 20px; border-top: 1px solid #282828; padding-top: 15px; }
+        .lyrics-content { white-space: pre-line; color: #b3b3b3; font-size: 13px; line-height: 1.8; font-family: inherit; max-height: 420px; overflow-y: auto; }
+
+        /* Player Bar */
         .player-bar { height: 90px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid #181818; background: #000; position: fixed; bottom: 0; width: 100%; z-index: 1000; }
         .player-left { display: flex; align-items: center; gap: 12px; width: 250px; }
-        .player-center { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 600px; }
+        .player-center { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; max-width: 700px; }
         .player-controls { display: flex; align-items: center; gap: 16px; }
         .control-btn { background: none; border: none; color: #b3b3b3; cursor: pointer; font-size: 16px; }
         .control-btn:hover { color: #fff; }
@@ -69,6 +59,7 @@
         .progress-container { display: flex; align-items: center; gap: 8px; width: 100%; font-size: 11px; color: #b3b3b3; }
         .progress-bar-bg { flex: 1; height: 4px; background: #4f4f4f; border-radius: 2px; position: relative; cursor: pointer; }
         .progress-bar-fill { width: 0%; height: 100%; background: #fff; border-radius: 2px; }
+        .playing-indicator { color: #1ed760; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -77,20 +68,20 @@
             <!-- 左側音樂庫 -->
             <aside class="sidebar-left">
                 <h3 style="color:#fff; margin:0 0 10px 0;">你的音樂庫</h3>
-                <div class="sidebar-item"><div class="thumb" style="background-image: url('https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=100');"></div><div>已按讚的歌曲<br><small style="color:#888;">播放清單 • @hubby</small></div></div>
-                <div class="sidebar-item"><div class="thumb" style="background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100');"></div><div>慢慢來比較快<br><small style="color:#888;">播放清單 • edwina60231</small></div></div>
-                <div class="sidebar-item"><div class="thumb" style="background-image: url('https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100');"></div><div>Lofi 輕音樂<br><small style="color:#888;">播放清單 • Spotify</small></div></div>
-                <div class="sidebar-item"><div class="thumb" style="background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100');"></div><div>浪漫情歌精選<br><small style="color:#888;">播放清單 • Hubby</small></div></div>
+                <div id="sidebarSongList"></div>
+                <div style="margin-top:10px; padding-top:10px; border-top:1px solid #282828; font-size:12px; color:#888;">💡 點歌曲開始播放</div>
             </aside>
 
             <!-- 中間主內容 -->
             <main class="content-panel">
                 <div class="hero-section">
-                    <div class="album-art"></div>
+                    <div class="album-art" id="playlistArt"></div>
                     <div>
-                        <p style="margin:0 0 8px 0; font-size:14px; font-weight:bold;">公開的播放清單</p>
-                        <h1 class="playlist-title">慢慢來比較快</h1>
-                        <p style="margin:12px 0 0 0; color:#b3b3b3; font-size:14px;"><strong style="color:#fff;">edwina60231</strong> • 2026 • 2 首歌曲[cite: 8]</p>
+                        <p style="margin:0 0 8px 0; font-size:14px; font-weight:bold; color:#b3b3b3;">我們的專屬播放清單 ♡</p>
+                        <h1 class="playlist-title">我們的歌</h1>
+                        <p style="margin:12px 0 0 0; color:#b3b3b3; font-size:14px;">
+                            <strong style="color:#fff;">Wifey & Hubby</strong> • 2026 • <span id="songCount">4</span> 首歌曲
+                        </p>
                     </div>
                 </div>
 
@@ -105,76 +96,89 @@
                         <tr>
                             <th style="width: 40px; text-align: center;">#</th>
                             <th>標題</th>
+                            <th style="width: 120px;">專輯</th>
                             <th style="text-align: right; padding-right: 20px;">⏱</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr class="song-row" onclick="togglePlay()">
-                            <td style="text-align: center; color: #b3b3b3;">1</td>
-                            <td>
-                                <div class="song-info">
-                                    <div style="width: 40px; height: 40px; background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100'); background-size: cover; border-radius: 4px;"></div>
-                                    <div>
-                                        <div style="color: #fff; font-size: 15px;">慢慢來比較快</div>
-                                        <div style="font-size: 13px; color: #b3b3b3;">edwina60231</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td style="text-align: right; padding-right: 20px; color: #b3b3b3; font-size: 14px;">3:23</td>
-                        </tr>
-                        <tr class="song-row" onclick="toggleGamePlay()">
-                            <td style="text-align: center; color: #b3b3b3;">2</td>
-                            <td>
-                                <div class="song-info">
-                                    <div style="width: 40px; height: 40px; background-image: url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=100'); background-size: cover; border-radius: 4px;"></div>
-                                    <div>
-                                        <div style="color: #fff; font-size: 15px;">有老公的孩子像個寶</div>
-                                        <div style="font-size: 13px; color: #b3b3b3;">edwina60231 (淘金小鎮盲猜區)</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td style="text-align: right; padding-right: 20px; color: #b3b3b3; font-size: 14px;">Game</td>
-                        </tr>
-                    </tbody>
+                    <tbody id="songTableBody"></tbody>
                 </table>
-
-                <!-- 遊戲區塊：淘金小鎮sing sing歌 -->
-                <div class="game-section">
-                    <div class="game-title">✨ 淘金小鎮sing sing歌 ✨</div>
-                    <p style="font-size: 13px; color: #b3b3b3; margin-bottom: 15px;">播放下方專屬歌曲，聽出歌詞並填入空格中，完成後點擊按鈕一鍵複製貼給 Wifey 吧！</p>
-                    
-                    <div class="game-player-bar">
-                        <button class="bottom-play-btn" id="gamePlayBtn" onclick="toggleGamePlay()">
-                            <svg id="gamePlayIcon" height="14" width="14" viewBox="0 0 24 24" fill="#000"><polygon points="5.5,3 19,12 5.5,21" /></svg>
-                        </button>
-                        <span style="font-size: 14px; font-weight: bold; color: #fff;">有老公的孩子像個寶 (song1.mp3)</span>
-                        <div class="progress-container" style="max-width: 300px; margin-left: auto;">
-                            <span id="gameCurrentTime">0:00</span>
-                            <div class="progress-bar-bg" id="gameProgressBarBg" onclick="seekGameAudio(event)">
-                                <div class="progress-bar-fill" id="gameProgressFill" style="width: 0%;"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- 挖空歌詞填寫區 -->
-                    <div class="game-lyrics-container" id="gameLyricsContainer"></div>
-
-                    <button class="submit-line-btn" onclick="copyAnswersToLine()">📋 複製整段答案，貼到line給wifey</button>
-                </div>
             </main>
 
-            <!-- 右側資訊欄與下方歌詞 -->
+            <!-- 右側：現在播放＋歌詞 -->
             <aside class="sidebar-right">
-                <h3 style="margin-top:0; font-size:16px;">慢慢來比較快</h3>
-                <div class="right-art"></div>
-                <p style="font-weight:bold; margin:0 0 5px 0; color:#fff;">edwina60231</p>
-                <p style="font-size:13px; color:#b3b3b3; margin:0 0 15px 0;">專屬於你的浪漫旋律，慢慢聽～ ❤️</p>
-                
+                <h3 style="margin-top:0; font-size:16px;" id="nowTitle">—</h3>
+                <div class="right-art" id="nowArt"></div>
+                <p style="font-weight:bold; margin:0 0 5px 0; color:#fff;" id="nowArtist">—</p>
+                <p style="font-size:13px; color:#b3b3b3; margin:0 0 15px 0;">專屬於你的旋律，慢慢聽～ ❤️</p>
+
                 <div class="lyrics-section">
                     <h4 style="color:#fff; margin:0 0 10px 0; font-size:14px;">歌詞</h4>
-                    <div class="lyrics-content">Yeah... This one’s for my hubby. 2026.valentines
+                    <div class="lyrics-content" id="lyricsContent">點一首歌開始 ♪</div>
+                </div>
+            </aside>
+        </div>
 
-[Verse 1 - Rap: 說唱風格，像是在說故事般娓娓道來，Chill Flow]
+        <!-- 底部播放列 -->
+        <footer class="player-bar">
+            <div class="player-left">
+                <div style="width: 56px; height: 56px; background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100'); background-size: cover; border-radius: 4px;" id="footerArt"></div>
+                <div>
+                    <div style="color: #fff; font-size: 14px; font-weight: 500;" id="footerTitle">未選取歌曲</div>
+                    <div style="font-size: 12px; color: #b3b3b3;" id="footerArtist">—</div>
+                </div>
+            </div>
+
+            <div class="player-center">
+                <div class="player-controls">
+                    <button class="control-btn" onclick="prevSong()" title="上一首">⏮</button>
+                    <button class="bottom-play-btn" id="footerPlayBtn" onclick="togglePlay()">
+                        <svg id="footerPlayIcon" height="14" width="14" viewBox="0 0 24 24" fill="#000"><polygon points="5.5,3 19,12 5.5,21" /></svg>
+                    </button>
+                    <button class="control-btn" onclick="nextSong()" title="下一首">⏭</button>
+                    <button class="loop-btn" id="loopBtn" onclick="toggleLoop()" title="單曲循環">
+                        <svg height="16" width="16" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="progress-container">
+                    <span id="currentTime">0:00</span>
+                    <div class="progress-bar-bg" id="progressBarBg" onclick="seekAudio(event)">
+                        <div class="progress-bar-fill" id="progressFill"></div>
+                    </div>
+                    <span id="totalTime">0:00</span>
+                </div>
+            </div>
+
+            <div style="width: 250px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+                <span>🔊</span>
+                <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" oninput="changeVolume(this.value)" style="accent-color: #1ed760; width: 100px; cursor: pointer;">
+            </div>
+        </footer>
+    </div>
+
+    <audio id="audio" preload="auto"></audio>
+
+    <script>
+        // ============ 歌曲資料（歌名暫定，之後可更換） ============
+        const ARTS = [
+            'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=200',
+            'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200',
+            'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?w=200',
+            'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200'
+        ];
+        const songs = [
+            { file: "song.mp3",       title: "慢慢來比較快",        artist: "edwina60231", album: "我們的歌", art: ARTS[0] },
+            { file: "song1.mp3",      title: "有老公的孩子像個寶",  artist: "edwina60231", album: "我們的歌", art: ARTS[1] },
+            { file: "fatgirl_v1.mp3", title: "胖妹妹 (V1)",         artist: "翁寶",        album: "我們的歌", art: ARTS[2] },
+            { file: "fatgirl_v2.mp3", title: "胖妹妹 (V2)",         artist: "翁寶",        album: "我們的歌", art: ARTS[3] }
+        ];
+
+        // ============ 歌詞庫 ============
+        const lyricsMap = {
+            "song.mp3": `Yeah... This one's for my hubby. 2026.valentines
+
+[Verse 1 - Rap]
 故事從二月說起，那個打噴嚏的早晨
 你笑我是鼻涕蟲卻叮嚀我喝溫水保溫
 穿著你那件外套，淡淡香味還弄不見
@@ -204,401 +208,250 @@
 你是月老給我的禮物，慢慢走這條幸福路
 
 未來的四月五月，一直到慢慢變老
-討論以後的小孩，你說長得醜醜你也好
-你超有自信，覺得我們基因沒煩惱
+討論以後的小孩，你說長得帥帥你也好
+因為你超有自信，覺得我們基因沒煩惱
 我說生完小孩也要愛情，你說老婆永遠是最好
 我的淺色指甲，剛好是你最喜歡的步調
 你不完美主義，忘東忘西批人個性
-在我眼裡你已經無可藥救
+在我眼裡你已經無可取代
 這首客製化的歌，專屬翁寶的微笑
 
 慢慢來，比較快，這是我們的節拍
 欠疼的女孩，永遠被你照顧
-遇到理想情人說不愛也會結婚
-寫下更多Hubby&Wifey的紀錄
-你說我值得被疼愛，誒誒男直接變大戶
+你遇到理想情人說不愛也會結婚
+寫下更多 Hubby&Wifey 的紀錄
+你說我值得被疼愛，蛤我真的變大戶
 
 Yeah, with_Weng(normal_life)
 System Optimized: It's good to have you
 就算有時候會感冒流鼻水...
 有你當我的特效藥，0 Errors
-Happy Valentine's Day, Hubby.</div>
-                </div>
-            </aside>
-        </div>
+Happy Valentine's Day, Hubby.`,
 
-        <!-- 底部控制條 (控制 song.mp3) -->
-        <footer class="player-bar">
-            <div class="player-left">
-                <div style="width: 56px; height: 56px; background-image: url('https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=100'); background-size: cover; border-radius: 4px;"></div>
-                <div>
-                    <div style="color: #fff; font-size: 14px; font-weight: 500;">慢慢來比較快</div>
-                    <div style="font-size: 12px; color: #b3b3b3;">edwina60231</div>
-                </div>
-            </div>
-            
-            <div class="player-center">
-                <div class="player-controls">
-                    <button class="control-btn" onclick="togglePlay()">⏮</button>
-                    <button class="bottom-play-btn" id="footerPlayBtn" onclick="togglePlay()">
-                        <svg id="footerPlayIcon" height="14" width="14" viewBox="0 0 24 24" fill="#000"><polygon points="5.5,3 19,12 5.5,21" /></svg>
-                    </button>
-                    <button class="control-btn" onclick="togglePlay()">⏭</button>
-                    <button class="loop-btn" id="loopBtn" onclick="toggleLoop()" title="單曲循環">
-                        <svg height="16" width="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46C19.54 15.03 20 13.57 20 12c0-4.42-3.58-8-8-8zm0 14c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8L5.24 7.74C4.46 8.97 4 10.43 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3z"/>
-                        </svg>
-                    </button>
-                </div>
-                <div class="progress-container">
-                    <span id="currentTime">0:00</span>
-                    <div class="progress-bar-bg" id="progressBarBg" onclick="seekAudio(event)">
-                        <div class="progress-bar-fill" id="progressFill"></div>
-                    </div>
-                    <span>3:23</span>
-                </div>
-            </div>
+            "song1.mp3": `有老公的孩子像個寶（淘金小鎮 sing sing 歌）
+（歌詞待補 ♡）`,
 
-            <div style="width: 250px; display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-                <span>🔊</span>
-                <input type="range" id="volumeBar" min="0" max="1" step="0.01" value="1" oninput="changeVolume(this.value)" style="accent-color: #1ed760; width: 100px; cursor: pointer;">
-            </div>
-        </footer>
-    </div>
+            "fatgirl_v1.mp3": `[Intro - 慵懶 Spoken / 低沉 Synth Bass 進入]
+Hey... 胖妹妹。
+命運就已經注定。
+我的肥肚肚加上你是我的妹妹，這就是 We。
+2026，鮮花鬧鐘已響起。Let's go.
 
-    <!-- 雙音訊元素 -->
-    <audio id="bgm" src="song.mp3" preload="auto"></audio>
-    <audio id="song1" src="song1.mp3" preload="auto"></audio>
+[Verse 1 - 初見與命運的交叉口（俏皮Flow）]
+江子翠與 mega city 人生從此刻起飛
+毛毛鞋跌入我懷裡 你尷-尬-到想要倒退
+古拉爵裡你笑不停 連菜單都拿不累
+我幫你切雞腿 你說 MAN 得不像本人
+基隆路與敦化南路的交界 柯達飯店寫下劇本
+藍色蝴蝶飛過那刻 月老早已牽好線
+我的肥肚肚配上你是我的妹妹
+胖妹妹三個字 是我們專屬的稱謂
 
-    <script>
-        // 主歌 (song.mp3) 控制邏輯
-        const audio = document.getElementById('bgm');
+[Pre-Chorus - MBTI 與日常小驚喜（旋律饒舌）]
+T 人的理性魅力 讓 F 人的我徹底淪陷
+日常小驚喜連發 內卷的浪漫在蔓延
+江南大叔的演唱會 成了我們的第一次夜店
+銀河水都聊到天亮 隔天熱情依然不滅
+
+[Chorus - 核心爆點 Hook（最炸 80s Disco Beat）]
+胖妹妹 胖妹妹 抱在懷裡最完美的調味
+胖妹妹 胖妹妹 牽你的手永遠不會累
+暖暖包 Uber Eats 吃到飽 送花送錢全都對味
+我是你的米卡莎 一輩子守護胖妹妹
+
+[Verse 2 - 寵溺日常（鬆一點 Flow）]
+拉亞早餐的火腿蛋餅 記得不要加醬
+頭份新竹來回跑 住民宿像度假一樣
+鋼琴彈給你聽 Jellycat 也看得心動發狂
+茶碗蒸加蘋果汁 宵夜麵麵送到身旁
+
+[Pre-Chorus 2]
+Wifey 的可愛脾氣 讓 Hubby 又愛又氣
+平常貼心舉動連發 發脆把我捧上天
+香港維多利亞港的夜景 讓我們想像未來無限
+鼎泰豐去了十遍 聊到半夜熱情依然不減
+
+[Chorus 2]
+胖妹妹 胖妹妹 抱在懷裡最完美的調味
+胖妹妹 胖妹妹 牽你的手永遠不會累
+訂閱寵妻專案 刷一萬直接讓我沒煩惱
+我是你的米卡莎 一輩子守護胖妹妹
+
+[Verse 3 - 未來藍圖（穩一點 Flow）]
+未來的日子走得再慢 我一點也不著急
+才怪～ 結婚這 part 我其實超級急 一點也不想慢
+蜜月商務艙就位 享受兩人的浪漫
+明仁大師開示 祝福升等直達頭等艙
+以後小孩要富養 長得像 Wifey 是答案
+未來約好歐洲看雪 浪漫場景 cliche
+彼此互相 appreciate oh 將幸福手寫
+
+[Bridge - 真心話（深情 Low-Tempo / 獨白）]
+遇到理想型 笨母雞無法招架
+你所有的樣子 在我眼裡都是最美的
+不管有沒有隱眼 我都當成寶貝捧著
+it's good to have you
+這首客製化的歌 讓我家兔兔微笑
+
+[Outro - 回扣收尾（漸弱 Spoken）]
+嘿～ 嘿～
+Every Day is Valentine's Day, Wifey.`,
+
+            "fatgirl_v2.mp3": `胖妹妹 (V2)
+（歌詞待補 ♡）`
+        };
+
+        // ============ 播放器核心 ============
+        const audio = document.getElementById('audio');
         const mainPlayBtn = document.getElementById('mainPlayBtn');
         const footerPlayBtn = document.getElementById('footerPlayBtn');
         const progressFill = document.getElementById('progressFill');
         const currentTimeEl = document.getElementById('currentTime');
+        const totalTimeEl = document.getElementById('totalTime');
         const loopBtn = document.getElementById('loopBtn');
         let isLooping = false;
+        let currentIndex = 0;
+
+        const sidebarEl = document.getElementById('sidebarSongList');
+        const tableBody = document.getElementById('songTableBody');
+        const nowTitle = document.getElementById('nowTitle');
+        const nowArtist = document.getElementById('nowArtist');
+        const nowArt = document.getElementById('nowArt');
+        const lyricsContent = document.getElementById('lyricsContent');
+        const footerTitle = document.getElementById('footerTitle');
+        const footerArtist = document.getElementById('footerArtist');
+        const footerArt = document.getElementById('footerArt');
+
+        function playSvg(color) {
+            return '<svg height="24" width="24" viewBox="0 0 24 24" fill="' + color + '"><polygon points="5.5,3 19,12 5.5,21"/></svg>';
+        }
+        function pauseSvg(color) {
+            return '<svg height="24" width="24" viewBox="0 0 24 24" fill="' + color + '"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>';
+        }
+        function renderPlayButtons(isPlaying) {
+            mainPlayBtn.innerHTML = isPlaying ? pauseSvg('#000') : playSvg('#000');
+            footerPlayBtn.innerHTML = isPlaying
+                ? '<svg height="14" width="14" viewBox="0 0 24 24" fill="#000"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>'
+                : '<svg height="14" width="14" viewBox="0 0 24 24" fill="#000"><polygon points="5.5,3 19,12 5.5,21"/></svg>';
+        }
+
+        // 建立歌曲清單（左側＋主表）
+        function renderSongList() {
+            sidebarEl.innerHTML = '';
+            tableBody.innerHTML = '';
+            document.getElementById('songCount').textContent = songs.length;
+
+            songs.forEach((s, i) => {
+                // 左側
+                const si = document.createElement('div');
+                si.className = 'sidebar-item' + (i === currentIndex ? ' active' : '');
+                si.innerHTML = '<div class="thumb" style="background-image:url(\'' + s.art + '\')"></div><div>' + s.title +
+                    '<br><small style="color:#888;">' + s.artist + '</small></div>';
+                si.onclick = () => loadSong(i, true);
+                sidebarEl.appendChild(si);
+
+                // 主表
+                const tr = document.createElement('tr');
+                tr.className = 'song-row' + (i === currentIndex ? ' active' : '');
+                tr.innerHTML = '<td style="text-align:center; color:' + (i === currentIndex ? '#1ed760' : '#b3b3b3') + ';">' +
+                    (i === currentIndex ? '<span class="playing-indicator">♪</span>' : (i + 1)) + '</td>' +
+                    '<td><div class="song-info"><div style="width:40px;height:40px;background-image:url(\'' + s.art + '\');background-size:cover;border-radius:4px;"></div>' +
+                    '<div><div class="song-title">' + s.title + '</div><div class="song-artist">' + s.artist + '</div></div></div></td>' +
+                    '<td style="font-size:13px;color:#b3b3b3;">' + s.album + '</td>' +
+                    '<td style="text-align:right;padding-right:20px;color:#b3b3b3;font-size:14px;">—</td>';
+                tr.onclick = () => loadSong(i, true);
+                tableBody.appendChild(tr);
+            });
+        }
+
+        // 載入歌曲
+        function loadSong(i, autoplay) {
+            if (i < 0 || i >= songs.length) i = 0;
+            currentIndex = i;
+            const s = songs[currentIndex];
+            audio.src = s.file;
+            audio.load();
+
+            // 更新 active 狀態
+            document.querySelectorAll('.sidebar-item').forEach((el, idx) => el.classList.toggle('active', idx === currentIndex));
+            document.querySelectorAll('.song-row').forEach((row, idx) => row.classList.toggle('active', idx === currentIndex));
+            renderPlayButtons(false);
+            progressFill.style.width = '0%';
+            currentTimeEl.textContent = '0:00';
+            totalTimeEl.textContent = '0:00';
+
+            // 右側與底部
+            nowTitle.textContent = s.title;
+            nowArtist.textContent = s.artist;
+            nowArt.style.backgroundImage = "url('" + s.art + "')";
+            footerTitle.textContent = s.title;
+            footerArtist.textContent = s.artist;
+            footerArt.style.backgroundImage = "url('" + s.art + "')";
+            lyricsContent.textContent = lyricsMap[s.file] || '（歌詞準備中 ♡）';
+            lyricsContent.scrollTop = 0;
+
+            if (autoplay) {
+                audio.play().then(() => renderPlayButtons(true)).catch(() => {
+                    alert('播放失敗，請確認 ' + s.file + ' 在同資料夾');
+                });
+            }
+        }
 
         function togglePlay() {
+            if (!audio.src) { loadSong(0, true); return; }
             if (audio.paused) {
-                // 自動暫停另一首遊戲音樂
-                if (!gameAudio.paused) {
-                    gameAudio.pause();
-                    updateGamePlayButton(false);
-                }
-                
-                audio.play().then(() => {
-                    updatePlayButtons(true);
-                }).catch(e => {
-                    alert("請確認同資料夾是否有 song.mp3 檔案！");
-                });
+                audio.play().then(() => renderPlayButtons(true)).catch(() => alert('請確認音檔在同資料夾'));
             } else {
                 audio.pause();
-                updatePlayButtons(false);
+                renderPlayButtons(false);
             }
         }
 
-        function updatePlayButtons(isPlaying) {
-            const pauseSvg = '<rect x="6" y="4" width="4" height="16" fill="currentColor"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/>';
-            const playSvg = '<polygon points="5.5,3 19,12 5.5,21" fill="currentColor"/>';
-            if (isPlaying) {
-                mainPlayBtn.innerHTML = `<svg height="24" width="24" viewBox="0 0 24 24" fill="#000">${pauseSvg}</svg>`;
-                footerPlayBtn.innerHTML = `<svg height="14" width="14" viewBox="0 0 24 24" fill="#000">${pauseSvg}</svg>`;
-            } else {
-                mainPlayBtn.innerHTML = `<svg height="24" width="24" viewBox="0 0 24 24" fill="#000">${playSvg}</svg>`;
-                footerPlayBtn.innerHTML = `<svg height="14" width="14" viewBox="0 0 24 24" fill="#000">${playSvg}</svg>`;
-            }
-        }
+        function nextSong() { loadSong((currentIndex + 1) % songs.length, true); }
+        function prevSong() { loadSong((currentIndex - 1 + songs.length) % songs.length, true); }
 
         function toggleLoop() {
             isLooping = !isLooping;
-            audio.loop = isLooping;
-            if (isLooping) {
-                loopBtn.classList.add('active');
-            } else {
-                loopBtn.classList.remove('active');
-            }
+            loopBtn.classList.toggle('active', isLooping);
         }
 
+        // 進度
         audio.addEventListener('timeupdate', () => {
             if (audio.duration) {
-                const percent = (audio.currentTime / audio.duration) * 100;
-                progressFill.style.width = percent + '%';
-                let mins = Math.floor(audio.currentTime / 60);
-                let secs = Math.floor(audio.currentTime % 60);
-                if (secs < 10) secs = '0' + secs;
-                currentTimeEl.textContent = `${mins}:${secs}`;
+                progressFill.style.width = (audio.currentTime / audio.duration * 100) + '%';
+                currentTimeEl.textContent = fmt(audio.currentTime);
+                totalTimeEl.textContent = fmt(audio.duration);
             }
         });
-
+        audio.addEventListener('loadedmetadata', () => {
+            totalTimeEl.textContent = fmt(audio.duration);
+        });
         audio.addEventListener('ended', () => {
-            if (!isLooping) {
-                updatePlayButtons(false);
-                progressFill.style.width = '0%';
-                currentTimeEl.textContent = '0:00';
-            } else {
-                audio.play();
-            }
+            if (isLooping) { audio.currentTime = 0; audio.play(); }
+            else { nextSong(); }
         });
+        audio.addEventListener('play', () => renderPlayButtons(true));
+        audio.addEventListener('pause', () => renderPlayButtons(false));
 
         function seekAudio(event) {
             const bg = document.getElementById('progressBarBg');
             const rect = bg.getBoundingClientRect();
             const pos = (event.clientX - rect.left) / bg.offsetWidth;
-            if (audio.duration) {
-                audio.currentTime = pos * audio.duration;
-            }
+            if (audio.duration) audio.currentTime = pos * audio.duration;
         }
 
-        function changeVolume(val) {
-            audio.volume = val;
-            document.getElementById('song1').volume = val;
+        function changeVolume(val) { audio.volume = val; }
+
+        function fmt(sec) {
+            if (!isFinite(sec)) return '0:00';
+            const m = Math.floor(sec / 60);
+            const s = Math.floor(sec % 60);
+            return m + ':' + (s < 10 ? '0' + s : s);
         }
 
-        // 遊戲專屬歌曲 (song1.mp3) 控制邏輯
-        const gameAudio = document.getElementById('song1');
-        const gamePlayBtn = document.getElementById('gamePlayBtn');
-        const gameProgressFill = document.getElementById('gameProgressFill');
-        const gameCurrentTimeEl = document.getElementById('gameCurrentTime');
-
-        function toggleGamePlay() {
-            if (gameAudio.paused) {
-                // 自動暫停另一首主音樂
-                if (!audio.paused) {
-                    audio.pause();
-                    updatePlayButtons(false);
-                }
-
-                gameAudio.play().then(() => {
-                    updateGamePlayButton(true);
-                }).catch(e => {
-                    alert("請確認同資料夾是否有 song1.mp3 檔案！");
-                });
-            } else {
-                gameAudio.pause();
-                updateGamePlayButton(false);
-            }
-        }
-
-        function updateGamePlayButton(isPlaying) {
-            const pauseSvg = '<rect x="5" y="4" width="4" height="16" fill="currentColor"/><rect x="15" y="4" width="4" height="16" fill="currentColor"/>';
-            const playSvg = '<polygon points="5.5,3 19,12 5.5,21" fill="currentColor"/>';
-            if (isPlaying) {
-                gamePlayBtn.innerHTML = `<svg height="14" width="14" viewBox="0 0 24 24" fill="#000">${pauseSvg}</svg>`;
-            } else {
-                gamePlayBtn.innerHTML = `<svg height="14" width="14" viewBox="0 0 24 24" fill="#000">${playSvg}</svg>`;
-            }
-        }
-
-        gameAudio.addEventListener('timeupdate', () => {
-            if (gameAudio.duration) {
-                const percent = (gameAudio.currentTime / gameAudio.duration) * 100;
-                gameProgressFill.style.width = percent + '%';
-                let mins = Math.floor(gameAudio.currentTime / 60);
-                let secs = Math.floor(gameAudio.currentTime % 60);
-                if (secs < 10) secs = '0' + secs;
-                gameCurrentTimeEl.textContent = `${mins}:${secs}`;
-            }
-        });
-
-        gameAudio.addEventListener('ended', () => {
-            updateGamePlayButton(false);
-            gameProgressFill.style.width = '0%';
-            gameCurrentTimeEl.textContent = '0:00';
-        });
-
-        function seekGameAudio(event) {
-            const bg = document.getElementById('gameProgressBarBg');
-            const rect = bg.getBoundingClientRect();
-            const pos = (event.clientX - rect.left) / bg.offsetWidth;
-            if (gameAudio.duration) {
-                gameAudio.currentTime = pos * gameAudio.duration;
-            }
-        }
-
-        // 動態生成盲猜歌詞挖空介面 (不將整首完整歌詞明文寫在 HTML 原始碼中)
-        const rawLyricsLines = [
-            "清晨鳥兒叫得那麼大聲，",
-            "啾啾啾晚上換我們去吵他們。",
-            "早上開車載我出門去上班，",
-            "不用搭公車還有香蕉早餐。",
-            "誰說霸氣又黏人感覺很安全，",
-            "我說他其實每次都洗澡不洗臉。",
-            "",
-            "有老公的孩子就像個寶，",
-            "不讓你去加油站獨自煩惱。",
-            "油箱蓋打不開開到引擎蓋，",
-            "[大勝]武安侯，殺豬養我每天都有控肉。",
-            "你說你無時無刻都想把我擁抱，",
-            "但寶貝，為什麼每次愛我都不say out loud。",
-            "",
-            "為了你帶上HDMI跟轉接頭，",
-            "什麼[3C]歌詞，baby take it slow",
-            "看著那台OVO小蘋果投影機，",
-            "從逐玉追到進擊into the unknown",
-            "[B2]有了新車位，[盤子]才月付九千，",
-            "哦，我不是盤子是筷子，快窮到脫褲子 ya",
-            "",
-            "有老公的孩子就像個寶，",
-            "不是巨人進擊但疼你總是without doubt。",
-            "加油打開引擎蓋還是覺得好可愛，",
-            "[大勝]武安侯，你在哪裡就是home。",
-            "",
-            "[你說我無時無刻都想把你擁抱]，",
-            "阿嬤給的香蕉包得好好的不會黑掉，",
-            "就像我們的感情永遠不退潮。[但是有果蠅]",
-            "外送點了桂圓茶，阿嬤還問有沒有金珠，",
-            "被老公疼愛的每一天都好滿足。",
-            "",
-            "已經取好票了，信箱是danny[092608]，",
-            "接完獵頭的電話，未來的路我們一起走吧。",
-            "就算你去酒局我也想跟著保護你，",
-            "跳著高興的雙人舞，你是我的母雞。",
-            "",
-            "有老公的孩子就像個寶，",
-            "股票要聽爸爸的趕快先跑。",
-            "引擎蓋到底怎麼開真的好可愛，",
-            "[大勝]武安侯，下一首可以唱陳華song。",
-            "依然站在我左邊的人，希望不是南亞科",
-            "[沒有啦]，老公我說你東西用完要收！"
-        ];
-
-        const container = document.getElementById('gameLyricsContainer');
-        const inputElements = [];
-
-        rawLyricsLines.forEach((line) => {
-            const lineDiv = document.createElement('div');
-            if (line === "") {
-                lineDiv.style.height = "12px";
-                container.appendChild(lineDiv);
-                return;
-            }
-
-            // 解析中括號固定字與未括號挖空字
-            let regex = /\[(.*?)\]/g;
-            let lastIdx = 0;
-            let match;
-
-            while ((match = regex.exec(line)) !== null) {
-                // 前面未刮號的部分要挖空
-                let plainText = line.substring(lastIdx, match.index);
-                if (plainText.length > 0) {
-                    appendBlanks(plainText, lineDiv);
-                }
-                // 括號內的固定字直接顯示
-                let fixedSpan = document.createElement('span');
-                fixedSpan.textContent = match[1];
-                fixedSpan.style.color = "#1ed760";
-                fixedSpan.style.fontWeight = "bold";
-                lineDiv.appendChild(fixedSpan);
-
-                lastIdx = regex.lastIndex;
-            }
-
-            // 處理剩餘的未刮號部分
-            let remainingText = line.substring(lastIdx);
-            if (remainingText.length > 0) {
-                appendBlanks(remainingText, lineDiv);
-            }
-
-            container.appendChild(lineDiv);
-        });
-
-        function appendBlanks(text, parentElement) {
-            // 每個字或詞轉換成一個輸入框，確保長度能填進去
-            for (let i = 0; i < text.length; i++) {
-                let char = text[i];
-                if (char === '，' || char === '。' || char === '！' || char === '？' || char === '～') {
-                    let punc = document.createElement('span');
-                    punc.textContent = char;
-                    parentElement.appendChild(punc);
-                } else {
-                    let input = document.createElement('input');
-                    input.type = 'text';
-                    input.maxLength = 1;
-                    input.dataset.expected = char;
-
-                    // 輸入時：若尚未在組字（中文輸入法），填滿一格後自動跳到下一格
-                    input.addEventListener('input', (e) => {
-                        if (input.value.length >= 1 && !e.isComposing) {
-                            const idx = inputElements.indexOf(input);
-                            const next = inputElements[idx + 1];
-                            if (next) next.focus();
-                        }
-                    });
-
-                    // 鍵盤控制：Enter 進下一格、Backspace 刪除本格，空格則往後刪上一格
-                    input.addEventListener('keydown', (e) => {
-                        const idx = inputElements.indexOf(input);
-                        if (e.key === 'Enter') {
-                            e.preventDefault();
-                            const next = inputElements[idx + 1];
-                            if (next) { next.focus(); next.select(); }
-                        } else if (e.key === 'Backspace') {
-                            // 本格已經有字：交給預設行為刪除（連同 maxLength 限制），不跳格
-                            if (input.value.length > 0) return;
-                            // 本格是空的：刪掉上一格的字，並把焦點移回去
-                            e.preventDefault();
-                            const prev = inputElements[idx - 1];
-                            if (prev) {
-                                prev.value = '';
-                                prev.focus();
-                            }
-                        }
-                    });
-
-                    parentElement.appendChild(input);
-                    inputElements.push(input);
-                }
-            }
-        }
-
-        // 一鍵複製組合答案到 Line
-        function copyAnswersToLine() {
-            let fullResult = "";
-            let idx = 0;
-            rawLyricsLines.forEach((line) => {
-                if (line === "") {
-                    fullResult += "\n";
-                    return;
-                }
-                let regex = /\[(.*?)\]/g;
-                let lastIdx = 0;
-                let match;
-                while ((match = regex.exec(line)) !== null) {
-                    let plainText = line.substring(lastIdx, match.index);
-                    for (let i = 0; i < plainText.length; i++) {
-                        let char = plainText[i];
-                        if (char === '，' || char === '。' || char === '！' || char === '？' || char === '～') {
-                            fullResult += char;
-                        } else {
-                            fullResult += (inputElements[idx].value || "＿");
-                            idx++;
-                        }
-                    }
-                    fullResult += "[" + match[1] + "]";
-                    lastIdx = regex.lastIndex;
-                }
-                let remainingText = line.substring(lastIdx);
-                for (let i = 0; i < remainingText.length; i++) {
-                    let char = remainingText[i];
-                    if (char === ' , ' || char === '，' || char === '。' || char === '！' || char === '？' || char === '～') {
-                        fullResult += char;
-                    } else {
-                        fullResult += (inputElements[idx].value || "＿");
-                        idx++;
-                    }
-                }
-                fullResult += "\n";
-            });
-
-            navigator.clipboard.writeText(fullResult).then(() => {
-                alert("✅ 答案已成功複製！快去 Line 貼給 Wifey 吧！❤️");
-            }).catch(err => {
-                alert("複製失敗，請手動複製。");
-            });
-        }
+        // 初始化
+        renderSongList();
+        loadSong(0, false);
     </script>
 </body>
 </html>
